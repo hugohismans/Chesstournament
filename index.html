@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tournois d'échecs</title>
+  <meta name="description" content="Gestion de joueurs, classement Elo et tournois d'échecs, entièrement dans le navigateur.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♞</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#players"><span class="brand-icon">♞</span> Tournois d'échecs</a>
+    <nav class="tabs" id="tabs">
+      <a href="#players" data-tab="players">Joueurs</a>
+      <a href="#tournaments" data-tab="tournaments">Tournois</a>
+      <a href="#games" data-tab="games">Parties</a>
+      <a href="#settings" data-tab="settings">Réglages</a>
+    </nav>
+  </header>
+  <main id="app" class="container"></main>
+  <div id="modal-root"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
