@@ -15,6 +15,7 @@ Web app de gestion de tournois d'échecs, 100 % locale (données dans le `localS
 - **Saisie des scores** (1-0, ½-½, 0-1) : classement de poule (départage Sonneborn-Berger), avancement du tableau et Elo mis à jour aussitôt. En tableau, une nulle se départage en désignant le vainqueur du départage.
 - **Parties libres** hors tournoi, historique complet.
 - **Pendule plein écran** : chaque joueur tape sur sa moitié pour passer la main (côté adverse retourné), cadences avec incrément, pause, alerte de fin de temps. Lancée depuis un match de tournoi, elle enregistre directement le résultat.
+- **Installable sur téléphone** (PWA) : logo, ouverture en plein écran, fonctionne hors ligne. Android : menu ⋮ → *Installer l'application* (ou bouton dans Réglages). iPhone : Safari → Partager → *Sur l'écran d'accueil*.
 - **Export / import JSON** pour sauvegarder ou changer d'appareil.
 
 ## Déploiement GitHub Pages

@@ -2,15 +2,22 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Tournois d'échecs</title>
   <meta name="description" content="Gestion de joueurs, classement Elo et tournois d'échecs, entièrement dans le navigateur.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♞</text></svg>">
+  <link rel="icon" href="icons/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#7a4e2d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Échecs">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#players"><span class="brand-icon">♞</span> Tournois d'échecs</a>
+    <a class="brand" href="#players"><img class="brand-logo" src="icons/logo.svg" alt=""> Tournois d'échecs</a>
     <nav class="tabs" id="tabs">
       <a href="#players" data-tab="players">Joueurs</a>
       <a href="#tournaments" data-tab="tournaments">Tournois</a>

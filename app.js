@@ -411,7 +411,8 @@ function viewPlayers() {
   }).join('');
 
   return `
-    <div class="page-head"><h1>Classement</h1></div>
+    <div class="page-head"><h1>Classement</h1>
+      ${!isStandalone() && (installPrompt || isIOS()) ? '<a class="btn sm" href="#settings">📲 Installer l\'app</a>' : ''}</div>
     <div class="card">
       <form id="add-player" class="row" autocomplete="off">
         <input type="text" name="name" placeholder="Nom du joueur" maxlength="40" required>
@@ -731,11 +732,48 @@ function viewGames() {
 
 /* ---------- Réglages ---------- */
 
+/* ---------- Installation sur le téléphone (PWA) ---------- */
+
+let installPrompt = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+function installCardHtml() {
+  let body;
+  if (isStandalone()) body = '<p>✅ L\'app est installée sur cet appareil.</p>';
+  else if (installPrompt) body = `<p class="muted small">Ajoutez l'app à votre écran d'accueil : elle s'ouvre en plein écran et fonctionne hors ligne.</p>
+      <button class="btn primary" data-action="installApp">📲 Installer l'app</button>`;
+  else if (isIOS()) body = `<p class="muted small">Sur iPhone / iPad, dans <strong>Safari</strong> : touchez <strong>Partager</strong> (le carré avec une flèche ↑),
+      puis <strong>« Sur l'écran d'accueil »</strong>. L'app s'ouvrira alors en plein écran, même hors ligne.</p>`;
+  else body = `<p class="muted small">Dans le menu du navigateur (⋮), choisissez <strong>« Installer l'application »</strong> ou
+      <strong>« Ajouter à l'écran d'accueil »</strong>. L'app s'ouvrira alors en plein écran, même hors ligne.</p>`;
+  return `<div class="card install-card"><div class="row" style="align-items:flex-start;flex-wrap:nowrap">
+      <img src="icons/icon-192.png" alt="" width="56" height="56" style="border-radius:14px;flex:none">
+      <div><h2 style="margin-bottom:4px">Installer sur le téléphone</h2>${body}</div></div></div>`;
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPrompt = e;
+  render();
+});
+
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  toast('App installée 🎉');
+  render();
+});
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
 function viewSettings() {
   const k = state.settings.k;
   const kOpts = [16, 20, 24, 32, 40].map(v => `<option value="${v}" ${v === k ? 'selected' : ''}>K = ${v}</option>`).join('');
   return `
     <div class="page-head"><h1>Réglages</h1></div>
+    ${installCardHtml()}
     <div class="card">
       <h2>Calcul de l'Elo</h2>
       <label class="field" style="max-width:260px">Facteur K<select id="k-factor">${kOpts}</select></label>
@@ -920,6 +958,13 @@ const actions = {
     removeGame(id); save(); render();
   },
 
+  async installApp() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice.catch(() => null);
+    installPrompt = null;
+    render();
+  },
   exportData() {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
