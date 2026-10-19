@@ -8,7 +8,7 @@ const STORAGE_KEY = 'chesstournament.v1';
 const DEFAULT_ELO = 1000;
 
 function defaultState() {
-  return { players: [], games: [], tournaments: [], settings: { k: 32 } };
+  return { players: [], games: [], tournaments: [], settings: { k: 32, clock: { minutes: 5, inc: 3 } } };
 }
 
 function load() {
@@ -374,6 +374,7 @@ function render() {
     case 'new': html = viewNewTournament(); break;
     case 't': html = viewTournament(id); break;
     case 'games': html = viewGames(); break;
+    case 'clock': html = viewClockPage(); break;
     case 'settings': html = viewSettings(); break;
     default: html = viewPlayers();
   }
@@ -583,7 +584,8 @@ function matchHtml({ t, kind, ref, white, black, game, editable, winner, extra =
     center = `<div class="score-final">${game ? resultText(game.result) : '–'}</div>`;
   }
   const clear = editable && game ? `<button class="btn ghost sm" data-action="clearResult" data-t="${t.id}" data-kind="${kind}" data-ref="${ref}">Effacer</button>` : '';
-  const extras = [extra, clear].filter(Boolean).join('');
+  const timer = editable && !game ? `<button class="btn ghost sm" data-action="openClock" data-t="${t.id}" data-kind="${kind}" data-ref="${ref}" data-white="${white}" data-black="${black}" title="Ouvrir la pendule">⏱ Pendule</button>` : '';
+  const extras = [extra, timer, clear].filter(Boolean).join('');
   return `<div class="match">${side(white, '♔', false)}${center}${side(black, '♚', true)}${extras ? `<div class="match-extra">${extras}</div>` : ''}</div>`;
 }
 
@@ -931,6 +933,8 @@ const actions = {
     state = defaultState(); save(); render(); toast('Données effacées.');
   },
 };
+
+Object.assign(actions, clockActions);
 
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-action]');
