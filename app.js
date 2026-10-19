@@ -768,12 +768,42 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
+function playerNamesCardHtml() {
+  const players = [...state.players].sort((a, b) => a.name.localeCompare(b.name));
+  const rows = players.map(p => `<div class="row" style="margin-bottom:6px;flex-wrap:nowrap">
+      <input type="text" data-rename="${p.id}" value="${esc(p.name)}" maxlength="40" aria-label="Nom de ${esc(p.name)}" style="flex:1">
+      <span class="muted small num" style="width:3.5em;text-align:right">${elo(p.id)}</span></div>`).join('');
+  return `<div class="card">
+      <h2>Noms des joueurs</h2>
+      ${players.length ? `<p class="muted small" style="margin-top:0">Modifiez un nom puis validez (Entrée ou en quittant le champ). L'Elo, les parties et les tournois sont conservés.</p>${rows}`
+      : '<p class="muted small">Aucun joueur. <a href="#players">Ajoutez des joueurs</a> d\'abord.</p>'}
+    </div>`;
+}
+
+function renamePlayer(id, raw) {
+  const p = player(id);
+  if (!p) return false;
+  const name = String(raw ?? '').trim().slice(0, 40);
+  if (!name) { toast('Le nom ne peut pas être vide.'); return false; }
+  if (name === p.name) return true;
+  if (state.players.some(x => x.id !== id && x.name.toLowerCase() === name.toLowerCase())) {
+    toast('Un autre joueur porte déjà ce nom.');
+    return false;
+  }
+  const old = p.name;
+  p.name = name;
+  save();
+  toast(`${old} → ${name}`);
+  return true;
+}
+
 function viewSettings() {
   const k = state.settings.k;
   const kOpts = [16, 20, 24, 32, 40].map(v => `<option value="${v}" ${v === k ? 'selected' : ''}>K = ${v}</option>`).join('');
   return `
     <div class="page-head"><h1>Réglages</h1></div>
     ${installCardHtml()}
+    ${playerNamesCardHtml()}
     <div class="card">
       <h2>Calcul de l'Elo</h2>
       <label class="field" style="max-width:260px">Facteur K<select id="k-factor">${kOpts}</select></label>
@@ -850,9 +880,8 @@ const actions = {
     modal = null; renderModal();
   },
   renamePlayer({ id }) {
-    const p = player(id);
-    const name = prompt('Nouveau nom :', p.name);
-    if (name && name.trim()) { p.name = name.trim().slice(0, 40); save(); render(); }
+    const name = prompt('Nouveau nom :', player(id).name);
+    if (name !== null && renamePlayer(id, name)) render();
   },
   deletePlayer({ id }) {
     const p = player(id);
@@ -1021,6 +1050,8 @@ document.addEventListener('change', e => {
     draft[key] = el.type === 'checkbox' ? el.checked : Number(el.value);
     if (key === 'groupCount' || key === 'qualifiers') draft.touched = true;
     render();
+  } else if (el.dataset.rename) {
+    if (!renamePlayer(el.dataset.rename, el.value)) el.value = player(el.dataset.rename)?.name ?? '';
   } else if (el.id === 'k-factor') {
     state.settings.k = Number(el.value); save(); render(); toast('Elo recalculé.');
   } else if (el.id === 'import-file' && el.files[0]) {
@@ -1041,6 +1072,7 @@ document.addEventListener('change', e => {
 });
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.dataset?.rename) e.target.blur();
   if (e.key === 'Escape' && modal) { modal = null; renderModal(); }
 });
 

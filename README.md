@@ -4,7 +4,7 @@ Web app de gestion de tournois d'échecs, 100 % locale (données dans le `localS
 
 ## Fonctionnalités
 
-- **Joueurs** : ajout (Elo par défaut 1000), classement, fiche joueur avec courbe d'Elo et historique.
+- **Joueurs** : ajout (Elo par défaut 1000), classement, fiche joueur avec courbe d'Elo et historique, noms modifiables dans Réglages.
 - **Elo** : mis à jour à chaque partie (facteur K réglable, 32 par défaut). Il est recalculé à partir de tout l'historique, donc corriger ou effacer un résultat reste cohérent.
 - **Tournois** : sélection des participants, puis choix du format :
   - **Poule unique** (toutes rondes),

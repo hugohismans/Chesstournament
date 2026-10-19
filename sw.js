@@ -2,7 +2,7 @@
 
 // Hors ligne : on sert le cache tout de suite et on le met à jour en arrière-plan.
 // Changer la version force le préchargement complet après une mise à jour.
-const CACHE = 'chesstournament-v1';
+const CACHE = 'chesstournament-v2';
 const ASSETS = [
   './', 'index.html', 'style.css', 'clock.js', 'app.js', 'manifest.webmanifest',
   'icons/logo.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
